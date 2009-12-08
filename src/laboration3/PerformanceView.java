@@ -11,7 +11,11 @@ import javax.swing.event.*;
  * @author Kim Burgestrand
  */
 public class PerformanceView extends JPanel {
-    private Performance performance;
+    /**
+	 * To make eclipse happy
+	 */
+	private static final long serialVersionUID = 2892178762102639403L;
+	private Performance performance;
 
     /**
      * @param p
@@ -66,8 +70,7 @@ public class PerformanceView extends JPanel {
         // Calculate each seats’ dimensions
         int margin  = 0; // space to canvas ends
         int padding = 2; // space between seats
-        int border  = 1; // seat border
-
+        
         // Available canvas space
         Rectangle canvas = getBounds();
         canvas.width    -= margin * 2;

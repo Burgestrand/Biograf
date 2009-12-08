@@ -1,7 +1,5 @@
 package laboration3;
 
-import java.util.ArrayList;
-
 /**
  * A model of all seats and their status.
  *
