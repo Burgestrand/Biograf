@@ -1,7 +1,10 @@
 package laboration3;
 
+import java.text.DateFormat;
+import java.util.Date;
+
 /**
- * A model of all seats and their status.
+ * A model of an entire performance (seats, time etc.)
  *
  * @author Kim Burgestrand
  */
@@ -9,6 +12,7 @@ public class Performance
 {
     // All seats
     private Seat[][] seats;
+    private String time;
 
     /**
      * Builds a performance with all available seats.
@@ -16,7 +20,7 @@ public class Performance
      * @param rows  Must be > 0
      * @param cols  Must be > 0
      */
-    public Performance(int rows, int cols)
+    public Performance(int rows, int cols, String time)
     {
         if (rows <= 0 || cols <= 0)
         {
@@ -31,6 +35,8 @@ public class Performance
                 seats[row][col] = new Seat(row, col);
             }
         }
+
+        this.time = time;
     }
 
     /**
@@ -64,18 +70,6 @@ public class Performance
     @Override
     public String toString()
     {
-        String ret = "";
-        for (Seat[] row : seats)
-        {
-            for (Seat s : row)
-            {
-                ret += "[" + s.status().toString().substring(0, 1) + "]";
-            }
-
-            ret.trim();
-            ret += "\n";
-        }
-
-        return ret.trim();
+        return time;
     }
 }

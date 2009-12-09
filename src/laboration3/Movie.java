@@ -1,5 +1,7 @@
 package laboration3;
 
+import java.util.ArrayList;
+
 /**
  * A model of a specific Movie
  * @author Kim Burgestrand
@@ -7,16 +9,15 @@ package laboration3;
 public class Movie
 {
     private String name;
-    private Performance performance;
+    private ArrayList<Performance> performance = new ArrayList();
 
     /**
      * @param name  Movie name
      * @param perf  Movie performance object
      */
-    public Movie (String name, Performance perf)
+    public Movie (String name)
     {
-        this.name        = name;
-        this.performance = perf;
+        this.name = name;
     }
 
     /**
@@ -30,7 +31,7 @@ public class Movie
     /**
      * @return
      */
-    public Performance performance()
+    public ArrayList<Performance> performance()
     {
         return performance;
     }

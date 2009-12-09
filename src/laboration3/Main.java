@@ -10,8 +10,6 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import sun.awt.HorizBagLayout;
-import sun.awt.VerticalBagLayout;
 
 /**
  * @author Kim Burgestrand
@@ -27,8 +25,7 @@ public class Main {
 
         // Stolplatser
         //----------------------------------------------------------------------
-        Performance p = new Performance(12, 10);
-        final PerformanceView pnlPerformance = new PerformanceView(p);
+        final PerformanceView pnlPerformance = new PerformanceView();
 
         // Kommandoknappar
         //----------------------------------------------------------------------
@@ -90,24 +87,36 @@ public class Main {
         // Filmpanel
         //----------------------------------------------------------------------
         JPanel pnlFilm = new JPanel();
-        JComboBox cmbMovie = new JComboBox();
 
-        // Ladda in filmer
-        for (Movie movie : new Repertoir().movies())
-        {
-            cmbMovie.addItem(movie);
-        }
+        Repertoir repertoir = new Repertoir();
+        JComboBox cmbMovie = new JComboBox(repertoir.movies().toArray());
+
+        Movie movie = (Movie)cmbMovie.getItemAt(0);
+        pnlPerformance.performance(movie.performance().get(0));
+        final JComboBox cmbPerformances = new JComboBox(movie.performance().toArray());
 
         cmbMovie.addItemListener(new ItemListener(){
             public void itemStateChanged(ItemEvent e)
             {
-                pnlPerformance.performance(((Movie) e.getItem()).performance());
+                cmbPerformances.removeAllItems();
+                for (Performance p : ((Movie)e.getItem()).performance())
+                {
+                    cmbPerformances.addItem(p);
+                }
+            }
+        });
+
+        cmbPerformances.addItemListener(new ItemListener(){
+            public void itemStateChanged(ItemEvent e)
+            {
+                pnlPerformance.performance(((Performance)e.getItem()));
                 pnlPerformance.repaint();
             }
         });
 
-        pnlFilm.setLayout(new GridLayout(1, 1));
+        pnlFilm.setLayout(new GridLayout(1, 2));
         pnlFilm.add(cmbMovie);
+        pnlFilm.add(cmbPerformances);
 
         JPanel pnlControls = new JPanel();
         pnlControls.setLayout(new GridLayout(1, 2));
