@@ -32,10 +32,8 @@ public class PerformanceView extends JPanel {
     /**
      * @param p
      */
-    public PerformanceView(Performance p)
+    public PerformanceView()
     {
-        performance(p);
-
         MouseHandler handler = new MouseHandler();
         addMouseListener(handler);
         addMouseMotionListener(handler);

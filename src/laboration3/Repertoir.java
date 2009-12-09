@@ -1,5 +1,6 @@
 package laboration3;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 
 /**
@@ -12,8 +13,11 @@ public class Repertoir {
     public Repertoir()
     {
         movies = new ArrayList();
-        movies.add(new Movie("Happy Gilmore", new Performance(12, 10)));
-        movies.add(new Movie("Interstate 60", new Performance(10, 10)));
+        Movie movie = new Movie("Happy Gilmore");
+
+        movie.performance().add(new Performance(12, 10, "21:30"));
+        movie.performance().add(new Performance(10, 10, "22:30"));
+        movies.add(movie);
     }
 
     /**
