@@ -69,7 +69,7 @@ public class Performance
         {
             for (Seat s : row)
             {
-                ret += "[" + s.status.toString().substring(0, 1) + "]";
+                ret += "[" + s.status().toString().substring(0, 1) + "]";
             }
 
             ret.trim();

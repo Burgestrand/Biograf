@@ -2,6 +2,7 @@ package laboration3;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.event.*;
 
@@ -12,10 +13,20 @@ import javax.swing.event.*;
  */
 public class PerformanceView extends JPanel {
     /**
-	 * To make eclipse happy
-	 */
-	private static final long serialVersionUID = 2892178762102639403L;
-	private Performance performance;
+     * To make eclipse happy
+     */
+    private static final long serialVersionUID = 2892178762102639403L;
+
+    /**
+     * The actual performance this is a view for.
+     */
+    private Performance performance;
+    private int rows, cols;
+
+    /**
+     * The list of marked seats
+     */
+    private ArrayList<Point> marks;
 
     /**
      * @param p
@@ -23,6 +34,10 @@ public class PerformanceView extends JPanel {
     public PerformanceView(Performance p)
     {
         performance = p;
+        rows = p.seats().length;
+        cols = p.seats()[0].length;
+        marks = new ArrayList(cols);
+
         addMouseListener(new MouseHandler());
     }
 
@@ -33,19 +48,16 @@ public class PerformanceView extends JPanel {
     @Override
     public void paintComponent(Graphics g)
     {
-    	Seat[][] seats       = performance.seats();
-    	Rectangle[][] rSeats = seats();
+        Rectangle seat   = seat();
+    	Seat[][] seats   = performance.seats();
+        int padding      = 2;
     	
-    	Seat seat;
-        for (int row = 0; row < rSeats.length; ++row)
+        for (int row = 0; row < rows; ++row)
         {
-            for (int col = 0; col < rSeats[row].length; ++col)
+            for (int col = 0; col < cols; ++col)
             {
-            	seat = seats[row][col];
-            	
-                // Filling color
                 Color status;
-                switch(seat.status)
+                switch(seats[row][col].status())
                 {
                     case Available: status = Color.GREEN; break;
                     case Booked:    status = Color.YELLOW; break;
@@ -53,50 +65,23 @@ public class PerformanceView extends JPanel {
                     default:        status = Color.white;
                 }
 
-                // Draw seat
-                Rectangle rect = rSeats[row][col];
-                rect.width -= padding * 2;
-                rect.height -= padding * 2;
+                Rectangle rect = new Rectangle();
+                rect.x      = canvas().x + seat.width * col;
+                rect.y      = canvas().y + seat.height * row;
+                rect.width  = seat.width - padding * 2;
+                rect.height = seat.height - padding * 2;
+
+                // Filling
                 g.setColor(status);
                 g.fillRect(rect.x,rect.y,rect.width,rect.height);
+
+                // Border
                 g.setColor(Color.BLACK);
                 g.drawRect(rect.x,rect.y,rect.width,rect.height);
             }
         }
     }
 
-
-    /**
-     * Calculates the rectangles of all seats within the JPanels’ bounds.
-     * @return
-     */
-    private int padding = 2;
-    public Rectangle[][] seats()
-    {
-        int rows = performance.seats().length;
-        int cols = performance.seats()[0].length;
-        
-        Rectangle seat   = seat();
-        Point     offset = offset();
-
-        // Calculate all seats
-        Rectangle[][] seats = new Rectangle[rows][cols];
-        for (int row = 0; row < rows; ++row)
-        {
-            for (int col = 0; col < cols; ++col)
-            {
-                Rectangle rect = new Rectangle();
-                rect.x      = offset.x + seat.width * col;
-                rect.y      = offset.y + seat.height * row;
-                rect.width  = seat.width;
-                rect.height = seat.height;
-                seats[row][col] = rect;
-            }
-        }
-
-        return seats;
-    }
-    
     /**
      * Calculates each Seats' maximum size.
      * @return
@@ -104,39 +89,47 @@ public class PerformanceView extends JPanel {
     private Rectangle seat()
     {
         Rectangle seat   = new Rectangle(0, 0);
-        seat.height     += getBounds().height / performance.seats().length;
-        seat.width      += getBounds().width / performance.seats()[0].length;
+        seat.height     += getBounds().height / rows;
+        seat.width      += getBounds().width / cols;
         return seat;
     }
     
     /**
-     * Calculate the offset from the JPanels' border to draw from.
+     * Calculate the virtual canvas to draw inside (offsets + dimension)
      * @return
      */
-    private Point offset()
+    private Rectangle canvas()
     {
-    	int rows = performance.seats().length, cols = performance.seats()[0].length;
-        return new Point((getBounds().width - seat().width * cols) / 2,
-        				 (getBounds().height - seat().height * rows) / 2);
+        Dimension size = new Dimension(seat().width * cols, seat().height * rows);
+        Point offset = new Point((getBounds().width - size.width) / 2,
+                                 (getBounds().height - size.height) / 2);
+        return new Rectangle(offset, size);
     }
-    
+
     /**
-     * Finds the seat at the given X / Y coordinates.
-     * 
-     * @param x
-     * @param y
+     * Finds the Seat at the given coordinates. Returns “null” if no seat.
+     * @param p
      * @return
      */
     private Seat findSeat(Point p)
     {
-    	// Find seat row
-    	return new Seat();
+        Point base = new Point(p.x - canvas().x, p.y - canvas().y);
+
+        int col = base.x / seat().width;
+        int row = base.y / seat().height;
+
+        return col < cols && row < rows ? performance.seats()[row][col] : null;
     }
 
     private class MouseHandler implements MouseInputListener {
         public void mouseClicked(MouseEvent e)
         {
-        	findSeat(e.getPoint());
+            Seat seat = findSeat(e.getPoint());
+            if (seat != null)
+            {
+                seat.status(Seat.Status.Sold);
+            }
+            
             repaint();
         }
         
