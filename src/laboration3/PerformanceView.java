@@ -2,6 +2,7 @@ package laboration3;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.event.*;
@@ -26,19 +27,30 @@ public class PerformanceView extends JPanel {
     /**
      * The list of marked seats
      */
-    private ArrayList<Point> marks;
+    private ArrayList<Seat> marked;
 
     /**
      * @param p
      */
     public PerformanceView(Performance p)
     {
+        performance(p);
+
+        MouseHandler handler = new MouseHandler();
+        addMouseListener(handler);
+        addMouseMotionListener(handler);
+    }
+
+    /**
+     * Sets the performance object to be used.
+     * @param p
+     */
+    public void performance(Performance p)
+    {
         performance = p;
         rows = p.seats().length;
         cols = p.seats()[0].length;
-        marks = new ArrayList(cols);
-
-        addMouseListener(new MouseHandler());
+        marked = new ArrayList(cols);
     }
 
     /**
@@ -48,6 +60,9 @@ public class PerformanceView extends JPanel {
     @Override
     public void paintComponent(Graphics g)
     {
+        // Clear drawing area (needed when performance object changes)
+        g.clearRect(0, 0, getBounds().width, getBounds().height);
+
         Rectangle seat   = seat();
     	Seat[][] seats   = performance.seats();
         int padding      = 2;
@@ -62,7 +77,7 @@ public class PerformanceView extends JPanel {
                     case Available: status = Color.GREEN; break;
                     case Booked:    status = Color.YELLOW; break;
                     case Sold:      status = Color.RED; break;
-                    default:        status = Color.white;
+                    default:        status = Color.WHITE;
                 }
 
                 Rectangle rect = new Rectangle();
@@ -71,19 +86,34 @@ public class PerformanceView extends JPanel {
                 rect.width  = seat.width - padding * 2;
                 rect.height = seat.height - padding * 2;
 
-                // Filling
-                g.setColor(status);
-                g.fillRect(rect.x,rect.y,rect.width,rect.height);
-
                 // Border
                 g.setColor(Color.BLACK);
-                g.drawRect(rect.x,rect.y,rect.width,rect.height);
+                g.fillRect(rect.x
+                          ,rect.y
+                          ,rect.width
+                          ,rect.height);
+
+                // Filling (superficial border)
+                int border = marked.contains(seats[row][col]) ? 2 : 1;
+                g.setColor(status);
+                g.fillRect(rect.x + border
+                          ,rect.y + border
+                          ,rect.width - border * 2
+                          ,rect.height - border * 2);
+
+                // Seat number
+                g.setColor(Color.BLACK);
+                String number = Integer.toString((cols * row) + col);
+                Rectangle2D n = g.getFontMetrics().getStringBounds(number, g);
+                g.drawString(number
+                            ,rect.x + rect.width / 2 - (int)(n.getWidth() / 2)
+                            ,rect.y + rect.height / 2 + (int)(n.getHeight() / 2));
             }
         }
     }
 
     /**
-     * Calculates each Seats' maximum size.
+     * Calculates the maximum size for a Seat
      * @return
      */
     private Rectangle seat()
@@ -121,23 +151,42 @@ public class PerformanceView extends JPanel {
         return col < cols && row < rows ? performance.seats()[row][col] : null;
     }
 
-    private class MouseHandler implements MouseInputListener {
-        public void mouseClicked(MouseEvent e)
+    /**
+     * Retrieves the marked seats.
+     * @return
+     */
+    public ArrayList<Seat> marked()
+    {
+        return marked;
+    }
+
+    /**
+     * Sets the status of all marked seats.
+     * @param status
+     */
+    public void status(Seat.Status status)
+    {
+        for (Seat seat : marked)
         {
-            Seat seat = findSeat(e.getPoint());
-            if (seat != null)
-            {
-                seat.status(Seat.Status.Sold);
-            }
-            
+            seat.status(status);
+        }
+        marked.clear();
+        repaint();
+    }
+
+    private class MouseHandler implements MouseInputListener {
+        public void mouseClicked(MouseEvent e) {
+            marked.clear();
+            marked.add(findSeat(e.getPoint()));
             repaint();
         }
-        
+
+        public void mouseDragged(MouseEvent e) {}
         public void mousePressed(MouseEvent e) {}
         public void mouseReleased(MouseEvent e) {}
+
         public void mouseEntered(MouseEvent e) {}
         public void mouseExited(MouseEvent e) {}
-        public void mouseDragged(MouseEvent e) {}
         public void mouseMoved(MouseEvent e) {}
     }
 }

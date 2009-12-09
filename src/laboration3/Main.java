@@ -4,6 +4,10 @@
 package laboration3;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import sun.awt.HorizBagLayout;
@@ -13,7 +17,6 @@ import sun.awt.VerticalBagLayout;
  * @author Kim Burgestrand
  */
 public class Main {
-
     /**
      * @param args the command line arguments
      */
@@ -23,30 +26,94 @@ public class Main {
         frmMain.setPreferredSize(new Dimension(500, 500));
 
         // Stolplatser
-        Performance p = new Performance(12, 20);
-        PerformanceView pnlPerformance = new PerformanceView(p);
+        //----------------------------------------------------------------------
+        Performance p = new Performance(12, 10);
+        final PerformanceView pnlPerformance = new PerformanceView(p);
 
-        // Kontroller
-        //-------------------------------------------------------
-        // Filminfo
-        JPanel pnlFilm = new JPanel();
-        JLabel lblFilm = new JLabel("Mini Ninjas");
-        pnlFilm.setLayout(new GridLayout(2, 1));
-        pnlFilm.add(lblFilm);
-
-        // Knappar
+        // Kommandoknappar
+        //----------------------------------------------------------------------
         JPanel pnlButtons = new JPanel();
-        pnlButtons.setLayout(new GridLayout(1, 2));
+        pnlButtons.setLayout(new GridLayout(1, 4));
+
+        JButton btnExit = new JButton("Avsluta");
         JButton btnBook = new JButton("Boka");
-        JButton btnBuy  = new JButton("Hämta");
+        JButton btnSell = new JButton("Sälj");
+        JButton btnFetch = new JButton("Hämta");
+
+        pnlButtons.add(btnExit);
         pnlButtons.add(btnBook);
-        pnlButtons.add(btnBuy);
+        pnlButtons.add(btnSell);
+        pnlButtons.add(btnFetch);
+
+        // Händelsehanterare
+        btnExit.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e)
+            {
+                System.exit(0);
+            }
+        });
+
+        btnBook.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e)
+            {
+                pnlPerformance.status(Seat.Status.Booked);
+            }
+        });
+
+        btnSell.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e)
+            {
+                boolean booked = false;
+                for (Seat seat : pnlPerformance.marked())
+                {
+                    booked = seat.status().equals(Seat.Status.Booked);
+                    if (booked == false)
+                    {
+                        break;
+                    }
+                }
+
+                if (booked)
+                {
+                    pnlPerformance.status(Seat.Status.Sold);
+                }
+            }
+        });
+
+        btnFetch.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e)
+            {
+                throw new UnsupportedOperationException("Not supported yet.");
+            }
+        });
+
+        // Filmpanel
+        //----------------------------------------------------------------------
+        JPanel pnlFilm = new JPanel();
+        JComboBox cmbMovie = new JComboBox();
+
+        // Ladda in filmer
+        for (Movie movie : new Repertoir().movies())
+        {
+            cmbMovie.addItem(movie);
+        }
+
+        cmbMovie.addItemListener(new ItemListener(){
+            public void itemStateChanged(ItemEvent e)
+            {
+                pnlPerformance.performance(((Movie) e.getItem()).performance());
+                pnlPerformance.repaint();
+            }
+        });
+
+        pnlFilm.setLayout(new GridLayout(1, 1));
+        pnlFilm.add(cmbMovie);
 
         JPanel pnlControls = new JPanel();
         pnlControls.setLayout(new GridLayout(1, 2));
-        pnlControls.add(pnlFilm);
         pnlControls.add(pnlButtons);
-        pnlControls.setBorder(new EmptyBorder(10, 10, 10, 10));
+        pnlControls.add(pnlFilm);
+        pnlControls.setBorder(new EmptyBorder(5, 2, 5, 2));
 
         // Lägg till huvudpanelen
         //---------------------------------------------------------

@@ -19,13 +19,18 @@ public class Seat extends JComponent
      * The Seats’ status: Available, Booked or Sold
      */
     private Status status;
+    private int row, col;
 
     /**
      * Create a new available seat.
+     * @param row
+     * @param col 
      */
-    public Seat ()
+    public Seat (int row, int col)
     {
-        this.status = Status.Available;
+        this.col = col;
+        this.row = row;
+        status = Status.Available;
     }
 
     /**

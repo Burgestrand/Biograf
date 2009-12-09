@@ -28,7 +28,7 @@ public class Performance
         {
             for (int col = 0; col < cols; ++col)
             {
-                seats[row][col] = new Seat();
+                seats[row][col] = new Seat(row, col);
             }
         }
     }

@@ -34,4 +34,12 @@ public class Movie
     {
         return performance;
     }
+
+    /**
+     * @return
+     */
+    public String toString()
+    {
+        return name;
+    }
 }
