@@ -30,7 +30,7 @@ public class PerformanceView extends JPanel {
     private ArrayList<Seat> marked;
 
     /**
-     * @param p
+     * Remember to call performance before you try to paint this panel
      */
     public PerformanceView()
     {
@@ -49,6 +49,7 @@ public class PerformanceView extends JPanel {
         rows = p.seats().length;
         cols = p.seats()[0].length;
         marked = new ArrayList(cols);
+        repaint();
     }
 
     /**
@@ -135,7 +136,7 @@ public class PerformanceView extends JPanel {
     }
 
     /**
-     * Finds the Seat at the given coordinates. Returns “null” if no seat.
+     * Finds the Seat at the given coordinates. Returns “null” if no seat was found.
      * @param p
      * @return
      */
@@ -150,12 +151,12 @@ public class PerformanceView extends JPanel {
     }
 
     /**
-     * Retrieves the marked seats.
+     * Retrieves the marked seat(s)
      * @return
      */
     public ArrayList<Seat> marked()
     {
-        return marked;
+        return (ArrayList<Seat>) marked.clone();
     }
 
     /**
@@ -168,23 +169,42 @@ public class PerformanceView extends JPanel {
         {
             seat.status(status);
         }
+        repaint();
+    }
+
+    /**
+     * Unmarks the marked seats.
+     */
+    public void unmark()
+    {
         marked.clear();
         repaint();
     }
 
-    private class MouseHandler implements MouseInputListener {
+    /**
+     * Handles mouse clicks on the whole panel.
+     */
+    private class MouseHandler extends MouseInputAdapter implements MouseInputListener {
+
+        /**
+         * Marks the seat that was clicked on, or unmarks it if it was already marked.
+         * @param e
+         */
+        @Override
         public void mouseClicked(MouseEvent e) {
-            marked.clear();
-            marked.add(findSeat(e.getPoint()));
+            Seat seat = findSeat(e.getPoint());
+
+            if ( ! marked.contains(seat))
+            {
+                marked.clear();
+                marked.add(seat);
+            }
+            else
+            {
+                marked.clear();
+            }
+            
             repaint();
         }
-
-        public void mouseDragged(MouseEvent e) {}
-        public void mousePressed(MouseEvent e) {}
-        public void mouseReleased(MouseEvent e) {}
-
-        public void mouseEntered(MouseEvent e) {}
-        public void mouseExited(MouseEvent e) {}
-        public void mouseMoved(MouseEvent e) {}
     }
 }

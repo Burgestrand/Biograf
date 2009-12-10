@@ -1,6 +1,5 @@
 package laboration3;
 
-import java.text.ParseException;
 import java.util.ArrayList;
 
 /**
@@ -10,14 +9,9 @@ import java.util.ArrayList;
 public class Repertoir {
     private ArrayList<Movie> movies;
 
-    public Repertoir()
+    public Repertoir(ArrayList<Movie> movies)
     {
-        movies = new ArrayList();
-        Movie movie = new Movie("Happy Gilmore");
-
-        movie.performance().add(new Performance(12, 10, "21:30"));
-        movie.performance().add(new Performance(10, 10, "22:30"));
-        movies.add(movie);
+        this.movies = movies;
     }
 
     /**
@@ -26,6 +20,27 @@ public class Repertoir {
      */
     public ArrayList<Movie> movies()
     {
-        return movies;
+        return (ArrayList<Movie>) movies.clone();
+    }
+
+    /**
+     * Creates an example repertoir.
+     */
+    public static Repertoir Default()
+    {
+        ArrayList<Movie> movies = new ArrayList();
+        Movie movie;
+
+        movie = new Movie("Happy Gilmore");
+              movie.performance().add(new Performance(12, 10, "21:30"));
+              movie.performance().add(new Performance(10, 10, "22:30"));
+              movies.add(movie);
+
+        movie = new Movie("Bollibompa");
+              movie.performance().add(new Performance(12, 10, "07:00"));
+              movie.performance().add(new Performance(10, 10, "18:00"));
+              movies.add(movie);
+
+        return new Repertoir(movies);
     }
 }

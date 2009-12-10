@@ -8,111 +8,48 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
 /**
  * @author Kim Burgestrand
  */
-public class Main {
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        JFrame frmMain = new JFrame("Biograf");
-        frmMain.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frmMain.setPreferredSize(new Dimension(500, 500));
+public class Main extends JFrame
+{
+    public Main()
+    {
+        setPreferredSize(new Dimension(500, 500));
+        setTitle("Biograf :: Laboration 3");
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
 
-        // Stolplatser
-        //----------------------------------------------------------------------
-        final PerformanceView pnlPerformance = new PerformanceView();
+        Repertoir repertoir = Repertoir.Default();
+        PerformanceView pnlPerformance = new PerformanceView();
 
         // Kommandoknappar
         //----------------------------------------------------------------------
         JPanel pnlButtons = new JPanel();
-        pnlButtons.setLayout(new GridLayout(1, 4));
+        pnlButtons.setLayout(new GridLayout());
 
-        JButton btnExit = new JButton("Avsluta");
-        JButton btnBook = new JButton("Boka");
-        JButton btnSell = new JButton("Sälj");
-        JButton btnFetch = new JButton("Hämta");
+        ButtonHandler btnHandler = new ButtonHandler(pnlPerformance);
 
-        pnlButtons.add(btnExit);
-        pnlButtons.add(btnBook);
-        pnlButtons.add(btnSell);
-        pnlButtons.add(btnFetch);
+        pnlButtons.add(new MyButton("Avsluta", btnHandler));
+        pnlButtons.add(new MyButton("Boka", btnHandler));
+        pnlButtons.add(new MyButton("Sälj", btnHandler));
+        pnlButtons.add(new MyButton("Hämta", btnHandler));
 
-        // Händelsehanterare
-        btnExit.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e)
-            {
-                System.exit(0);
-            }
-        });
-
-        btnBook.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e)
-            {
-                pnlPerformance.status(Seat.Status.Booked);
-            }
-        });
-
-        btnSell.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e)
-            {
-                boolean booked = false;
-                for (Seat seat : pnlPerformance.marked())
-                {
-                    booked = seat.status().equals(Seat.Status.Booked);
-                    if (booked == false)
-                    {
-                        break;
-                    }
-                }
-
-                if (booked)
-                {
-                    pnlPerformance.status(Seat.Status.Sold);
-                }
-            }
-        });
-
-        btnFetch.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e)
-            {
-                throw new UnsupportedOperationException("Not supported yet.");
-            }
-        });
-
-        // Filmpanel
+        // Film panel
         //----------------------------------------------------------------------
         JPanel pnlFilm = new JPanel();
 
-        Repertoir repertoir = new Repertoir();
         JComboBox cmbMovie = new JComboBox(repertoir.movies().toArray());
+        Movie current = (Movie)cmbMovie.getSelectedItem();
+        JComboBox cmbPerformances = new JComboBox(current.performance().toArray());
+        pnlPerformance.performance((Performance) cmbPerformances.getSelectedItem());
 
-        Movie movie = (Movie)cmbMovie.getItemAt(0);
-        pnlPerformance.performance(movie.performance().get(0));
-        final JComboBox cmbPerformances = new JComboBox(movie.performance().toArray());
-
-        cmbMovie.addItemListener(new ItemListener(){
-            public void itemStateChanged(ItemEvent e)
-            {
-                cmbPerformances.removeAllItems();
-                for (Performance p : ((Movie)e.getItem()).performance())
-                {
-                    cmbPerformances.addItem(p);
-                }
-            }
-        });
-
-        cmbPerformances.addItemListener(new ItemListener(){
-            public void itemStateChanged(ItemEvent e)
-            {
-                pnlPerformance.performance(((Performance)e.getItem()));
-                pnlPerformance.repaint();
-            }
-        });
+        // Event handlers
+        cmbMovie.addItemListener(new MovieChangeHandler(cmbPerformances));
+        cmbPerformances.addItemListener(new PerformanceChangeHandler(pnlPerformance));
 
         pnlFilm.setLayout(new GridLayout(1, 2));
         pnlFilm.add(cmbMovie);
@@ -124,11 +61,142 @@ public class Main {
         pnlControls.add(pnlFilm);
         pnlControls.setBorder(new EmptyBorder(5, 2, 5, 2));
 
-        // Lägg till huvudpanelen
+        // add components to main frame
         //---------------------------------------------------------
-        frmMain.add("Center", pnlPerformance);
-        frmMain.add("South", pnlControls);
-        frmMain.pack();
-        frmMain.setVisible(true);
+        add("Center", pnlPerformance);
+        add("South", pnlControls);
+        pack();
+        setVisible(true);
+    }
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args)
+    {
+        new Main();
+    }
+
+    // Knappar
+    //--------------------------------------------------------------------------
+    /**
+     * This kind of button implements its’ own action handler.
+     */
+    private class MyButton extends JButton
+    {
+        /**
+         * Creates a JButton with the given action listener.
+         * @param text
+         * @param handler
+         */
+        public MyButton(String text, ActionListener handler)
+        {
+            setText(text);
+            addActionListener(handler);
+        }
+    }
+
+    /**
+     * Handles button clicking.
+     */
+    private class ButtonHandler implements ActionListener
+    {
+        private PerformanceView performance;
+
+        public ButtonHandler(PerformanceView pnl)
+        {
+            performance = pnl;
+        }
+
+        public void actionPerformed(ActionEvent e)
+        {
+            String text = ((MyButton)e.getSource()).getText();
+
+            if (text.equals("Avsluta"))
+            {
+                System.exit(0);
+            }
+            else if (text.equals("Boka"))
+            {
+                performance.status(Seat.Status.Booked);
+                performance.unmark();
+            }
+            else if (text.equals("Sälj"))
+            {
+                for (Seat seat : performance.marked())
+                {
+                    if (seat.status().equals(Seat.Status.Booked))
+                    {
+                        seat.status(Seat.Status.Sold);
+                        performance.unmark();
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Listens for movie change.
+     */
+    private class MovieChangeHandler implements ItemListener
+    {
+        private JComboBox performances;
+
+        /**
+         * @param performances  The combo box which contains all performances.
+         */
+        public MovieChangeHandler(JComboBox performances)
+        {
+            this.performances = performances;
+        }
+
+        /**
+         * Fired when the movie is changed.
+         * @param e
+         */
+        public void itemStateChanged(ItemEvent e)
+        {
+            if (e.getStateChange() == ItemEvent.SELECTED)
+            {
+                Movie movie = (Movie)e.getItem();
+                performances.removeAllItems();
+
+                for (Performance p : movie.performance())
+                {
+                    performances.addItem(p);
+                }
+            }
+        }
+
+    }
+
+    /**
+     * Listens for performance change.
+     */
+    private class PerformanceChangeHandler implements ItemListener
+    {
+        private PerformanceView view;
+
+        /**
+         * @param performances  The combo box that contains the available performances
+         * @param viewpanel     The performance view panel
+         */
+        public PerformanceChangeHandler(PerformanceView view)
+        {
+            this.view = view;
+        }
+
+        /**
+         * Handles change of performance.
+         * @param e
+         */
+        public void itemStateChanged(ItemEvent e)
+        {
+            if (e.getStateChange() == ItemEvent.SELECTED)
+            {
+                Performance p = (Performance) e.getItem();
+                view.performance(p);
+            }
+        }
     }
 }
