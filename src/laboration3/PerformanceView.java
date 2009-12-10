@@ -182,6 +182,15 @@ public class PerformanceView extends JPanel {
     }
 
     /**
+     * Unmarks the given seat.
+     * @param seat
+     */
+    public void unmark(Seat seat)
+    {
+        marked.remove(seat);
+    }
+
+    /**
      * Handles mouse clicks on the whole panel.
      */
     private class MouseHandler extends MouseInputAdapter implements MouseInputListener {

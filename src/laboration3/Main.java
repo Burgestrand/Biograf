@@ -118,20 +118,38 @@ public class Main extends JFrame
             }
             else if (text.equals("Boka"))
             {
-                performance.status(Seat.Status.Booked);
-                performance.unmark();
+                // Books the seat(s) if they’re available
+                for (Seat seat : performance.marked())
+                {
+                    if (seat.status().equals(Seat.Status.Available))
+                    {
+                        performance.status(Seat.Status.Booked);
+                        performance.unmark(seat);
+                    }
+                }
             }
             else if (text.equals("Sälj"))
             {
+                // Sells the seat(s) if they’ve been booked
                 for (Seat seat : performance.marked())
                 {
                     if (seat.status().equals(Seat.Status.Booked))
                     {
                         seat.status(Seat.Status.Sold);
+                        printReceipt(seat);
                         performance.unmark();
                     }
                 }
             }
+        }
+
+        /**
+         * Prints a receipt to STDOUT.
+         * @param seat
+         */
+        private void printReceipt(Seat seat)
+        {
+            System.out.println("Plats #" + (seat.col() + 1) + " på rad " + (seat.row() + 1) + " såld.");
         }
     }
 

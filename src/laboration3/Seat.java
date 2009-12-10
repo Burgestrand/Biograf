@@ -43,6 +43,22 @@ public class Seat extends JComponent
     }
 
     /**
+     * @return
+     */
+    public int row()
+    {
+        return row;
+    }
+
+    /**
+     * @return
+     */
+    public int col()
+    {
+        return col;
+    }
+
+    /**
      * Sets the new status and returns the old.
      * @param newstatus
      * @return

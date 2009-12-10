@@ -1,8 +1,5 @@
 package laboration3;
 
-import java.text.DateFormat;
-import java.util.Date;
-
 /**
  * A model of an entire performance (seats, time etc.)
  *
@@ -19,6 +16,7 @@ public class Performance
      *
      * @param rows  Must be > 0
      * @param cols  Must be > 0
+     * @param time
      */
     public Performance(int rows, int cols, String time)
     {
