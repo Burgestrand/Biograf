@@ -1,0 +1,2 @@
+- En kontroll-klass (också en subklass till JPanel) som innehåller knapparna och två JLabels för film och datum. Här finns knapplyssnare som inre klass(er). 
+- (Main) som skapar en modell, en vy och en kontrolldel samt packar vyn och kontrolldelen i ett fönster och öppnar detta.
