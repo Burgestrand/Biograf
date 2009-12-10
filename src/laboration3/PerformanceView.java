@@ -30,7 +30,7 @@ public class PerformanceView extends JPanel {
     private ArrayList<Seat> marked;
 
     /**
-     * Remember to call performance before you try to paint this panel
+     * Remember to call performance before you try to paint this panel!
      */
     public PerformanceView()
     {
@@ -48,7 +48,7 @@ public class PerformanceView extends JPanel {
         performance = p;
         rows = p.seats().length;
         cols = p.seats()[0].length;
-        marked = new ArrayList(cols);
+        marked = new ArrayList<Seat>(cols);
         repaint();
     }
 
@@ -62,7 +62,7 @@ public class PerformanceView extends JPanel {
         // Clear drawing area (needed when performance object changes)
         g.clearRect(0, 0, getBounds().width, getBounds().height);
 
-        Rectangle seat   = seat();
+        Dimension seat   = seat();
     	Seat[][] seats   = performance.seats();
         int padding      = 2;
     	
@@ -79,7 +79,7 @@ public class PerformanceView extends JPanel {
                     default:        status = Color.WHITE;
                 }
 
-                Rectangle rect = new Rectangle();
+                Rectangle rect = new Rectangle(new Point(0, 0), seat);
                 rect.x      = canvas().x + seat.width * col;
                 rect.y      = canvas().y + seat.height * row;
                 rect.width  = seat.width - padding * 2;
@@ -112,20 +112,18 @@ public class PerformanceView extends JPanel {
     }
 
     /**
-     * Calculates the maximum size for a Seat
-     * @return
+     * @return  Maximum dimensions for any given seat in this panel
      */
-    private Rectangle seat()
+    private Dimension seat()
     {
-        Rectangle seat   = new Rectangle(0, 0);
+        Dimension seat   = new Dimension(0, 0);
         seat.height     += getBounds().height / rows;
         seat.width      += getBounds().width / cols;
         return seat;
     }
     
     /**
-     * Calculate the virtual canvas to draw inside (offsets + dimension)
-     * @return
+     * @return  The virtual canvas to draw inside (both offsets and dimensions)
      */
     private Rectangle canvas()
     {
@@ -136,9 +134,8 @@ public class PerformanceView extends JPanel {
     }
 
     /**
-     * Finds the Seat at the given coordinates. Returns “null” if no seat was found.
      * @param p
-     * @return
+     * @return  The seat at the given coordinates, or null if no seat was found
      */
     private Seat findSeat(Point p)
     {
@@ -151,16 +148,15 @@ public class PerformanceView extends JPanel {
     }
 
     /**
-     * Retrieves the marked seat(s)
-     * @return
+     * @return  A list of the marked seats
      */
     public ArrayList<Seat> marked()
     {
-        return (ArrayList<Seat>) marked.clone();
+        return new ArrayList<Seat>(marked);
     }
 
     /**
-     * Sets the status of all marked seats.
+     * Sets the status of all marked seats to “status”.
      * @param status
      */
     public void status(Seat.Status status)
@@ -173,7 +169,7 @@ public class PerformanceView extends JPanel {
     }
 
     /**
-     * Unmarks the marked seats.
+     * Unmarks the marked seats
      */
     public void unmark()
     {
@@ -182,7 +178,7 @@ public class PerformanceView extends JPanel {
     }
 
     /**
-     * Unmarks the given seat.
+     * Unmarks the given seat
      * @param seat
      */
     public void unmark(Seat seat)

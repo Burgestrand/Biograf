@@ -1,12 +1,10 @@
 package laboration3;
 
-import javax.swing.JComponent;
-
 /**
  * A model of an individual seat.
  * @author Kim Burgestrand
  */
-public class Seat extends JComponent
+public class Seat
 {
     public enum Status
     {
@@ -34,8 +32,7 @@ public class Seat extends JComponent
     }
 
     /**
-     * Retrieves’ the current status.
-     * @return
+     * @return  The seats’ current status
      */
     public Status status()
     {
@@ -43,7 +40,7 @@ public class Seat extends JComponent
     }
 
     /**
-     * @return
+     * @return  The seats’ row ([0..])
      */
     public int row()
     {
@@ -51,7 +48,7 @@ public class Seat extends JComponent
     }
 
     /**
-     * @return
+     * @return  The seats’ column ([0..])
      */
     public int col()
     {
@@ -61,7 +58,7 @@ public class Seat extends JComponent
     /**
      * Sets the new status and returns the old.
      * @param newstatus
-     * @return
+     * @return  the status that was set before change
      */
     public Status status(Status newstatus)
     {

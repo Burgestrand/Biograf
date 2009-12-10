@@ -12,11 +12,12 @@ public class Performance
     private String time;
 
     /**
-     * Builds a performance with all available seats.
+     * Creates a new Performance object with the rows*cols amount of seats
+     * available for booking at the given time.
      *
      * @param rows  Must be > 0
      * @param cols  Must be > 0
-     * @param time
+     * @param time  The time this performance is performed
      */
     public Performance(int rows, int cols, String time)
     {
@@ -38,7 +39,7 @@ public class Performance
     }
 
     /**
-     * @return
+     * @return  The array of seats this performance has (no matter the status)
      */
     public Seat[][] seats()
     {
@@ -46,8 +47,8 @@ public class Performance
     }
 
     /**
-     * @param row   >= 1
-     * @return
+     * @param row   Must be >= 1
+     * @return      The list of seats at the given row
      */
     public Seat[] seats(int row)
     {
@@ -57,7 +58,7 @@ public class Performance
     /**
      * @param row >= 1
      * @param col >= 1
-     * @return
+     * @return  The seat at the given row and column.
      * @throws IndexOutOfBoundsException
      */
     public Seat seats(int row, int col)

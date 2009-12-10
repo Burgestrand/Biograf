@@ -9,19 +9,22 @@ import java.util.ArrayList;
 public class Movie
 {
     private String name;
-    private ArrayList<Performance> performance = new ArrayList();
+    private ArrayList<Performance> performance;
 
     /**
+     * Creates a new movie with the given name and list of performances.
+     *
      * @param name  Movie name
-     * @param perf  Movie performance object
+     * @param performance
      */
-    public Movie (String name)
+    public Movie (String name, ArrayList<Performance> performance)
     {
         this.name = name;
+        this.performance = performance;
     }
 
     /**
-     * @return
+     * @return  The name of this movie
      */
     public String name()
     {
@@ -29,15 +32,15 @@ public class Movie
     }
 
     /**
-     * @return
+     * @return  The list of performances this movie has
      */
     public ArrayList<Performance> performance()
     {
-        return performance;
+        return new ArrayList<Performance>(performance);
     }
 
     /**
-     * @return
+     * @return  @see name
      */
     public String toString()
     {

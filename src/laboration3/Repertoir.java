@@ -15,31 +15,31 @@ public class Repertoir {
     }
 
     /**
-     * Return the whole repertoir.
-     * @return
+     * @return  The whole repertoir (list of available movies)
      */
     public ArrayList<Movie> movies()
     {
-        return (ArrayList<Movie>) movies.clone();
+        return new ArrayList<Movie>(movies);
     }
 
     /**
-     * Creates an example repertoir.
+     * @return  An example repertoir consisting of two movies with two performances
+     *          each.
      */
     public static Repertoir Default()
     {
-        ArrayList<Movie> movies = new ArrayList();
-        Movie movie;
+        ArrayList<Movie> movies = new ArrayList<Movie>();
+        ArrayList<Performance> performances;
 
-        movie = new Movie("Happy Gilmore");
-              movie.performance().add(new Performance(12, 10, "21:30"));
-              movie.performance().add(new Performance(10, 10, "22:30"));
-              movies.add(movie);
+        performances = new ArrayList<Performance>();
+        performances.add(new Performance(12, 10, "21:30"));
+        performances.add(new Performance(10, 10, "22:30"));
+            movies.add(new Movie("Happy Gilmore", performances));
 
-        movie = new Movie("Bollibompa");
-              movie.performance().add(new Performance(12, 10, "07:00"));
-              movie.performance().add(new Performance(10, 10, "18:00"));
-              movies.add(movie);
+        performances = new ArrayList<Performance>();
+        performances.add(new Performance(12, 10, "07:00"));
+        performances.add(new Performance(10, 10, "18:00"));
+            movies.add(new Movie("Bollibompa", performances));
 
         return new Repertoir(movies);
     }

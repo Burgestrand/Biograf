@@ -8,15 +8,20 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
 /**
+ * The main application entry point. Sets up everything from movies to GUI.
  * @author Kim Burgestrand
  */
 public class Main extends JFrame
 {
+    /**
+     * To make lint happy
+     */
+    private static final long serialVersionUID = 2213123762102639403L;
+
     public Main()
     {
         setPreferredSize(new Dimension(500, 500));
@@ -85,6 +90,11 @@ public class Main extends JFrame
     private class MyButton extends JButton
     {
         /**
+         * To make lint happy.
+         */
+        private static final long serialVersionUID = 289217876210212303L;
+
+        /**
          * Creates a JButton with the given action listener.
          * @param text
          * @param handler
@@ -103,11 +113,19 @@ public class Main extends JFrame
     {
         private PerformanceView performance;
 
+        /**
+         * Creates a button handler for the command buttons.
+         * @param pnl
+         */
         public ButtonHandler(PerformanceView pnl)
         {
             performance = pnl;
         }
 
+        /**
+         * Handles command button events.
+         * @param e
+         */
         public void actionPerformed(ActionEvent e)
         {
             String text = ((MyButton)e.getSource()).getText();
