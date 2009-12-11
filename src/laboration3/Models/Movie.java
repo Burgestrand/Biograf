@@ -22,6 +22,11 @@ public class Movie
     {
         this.name = name;
         this.performance = performance;
+        
+        for (Performance p : performance)
+        {
+        	p.movie = this;
+        }
     }
 
     /**

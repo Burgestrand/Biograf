@@ -11,6 +11,7 @@ public class Performance
     // All seats
     private Seat[][] seats;
     private String time;
+    public Movie movie;
 
     /**
      * Creates a new Performance object with the rows*cols amount of seats
@@ -70,6 +71,6 @@ public class Performance
     @Override
     public String toString()
     {
-        return time;
+        return movie + " (" + time + ")";
     }
 }

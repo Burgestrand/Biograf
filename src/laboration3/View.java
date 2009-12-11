@@ -50,6 +50,15 @@ public class View extends JPanel {
         selected = new ArrayList<Seat>(cols);
         repaint();
     }
+    
+    /**
+     * Retrieves' the performance object currently in use.
+     * @return the performance object currently in use
+     */
+    public Performance performance()
+    {
+    	return performance;
+    }
 
     /**
      * Paints the performance in a pretty way in the panel.
@@ -166,7 +175,7 @@ public class View extends JPanel {
     }
 
     /**
-     * Unmarks the given seat.
+     * Deselcts the given seat.
      * 
      * Note: does *not* call repaint
      * 

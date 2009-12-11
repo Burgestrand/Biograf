@@ -100,7 +100,8 @@ public class Controller extends JPanel implements ActionListener, ItemListener
      */
     private void printReceipt(Seat seat)
     {
-        System.out.println("Plats #" + (seat.col() + 1) + " på rad " + (seat.row() + 1) + " såld.");
+    	System.out.println(view.performance());
+        System.out.println("\tPlats #" + (seat.col() + 1) + " på rad " + (seat.row() + 1) + " såld.");
     }
 	
 	/**
