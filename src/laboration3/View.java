@@ -164,6 +164,20 @@ public class View extends JPanel {
     {
         return new ArrayList<Seat>(selected);
     }
+    
+    /**
+     * Selects a seat if it is not already selected.
+     * @param seat	the seat to select
+     */
+    public void select(Seat seat)
+    {
+    	if ( ! selected.contains(seat))
+    	{
+    		selected.add(seat);
+    	}
+    	
+    	repaint();
+    }
 
     /**
      * Deselects all marked seats
@@ -184,32 +198,68 @@ public class View extends JPanel {
     public void deselect(Seat seat)
     {
         selected.remove(seat);
+        repaint();
+    }
+    
+    /**
+     * Toggles selection of a seat
+     * @param seat	the seat to toggle
+     */
+    public void toggle(Seat seat)
+    {
+    	if (selected.contains(seat))
+    	{
+    		deselect(seat);
+    	}
+    	else
+    	{
+    		select(seat);
+    	}
+    	repaint();
     }
 
     /**
      * Handles mouse clicks on the whole panel.
      */
     private class MouseHandler extends MouseInputAdapter implements MouseInputListener {
-
         /**
-         * Marks the seat that was clicked on, or unmarks it if it was already marked.
+         * Toggles selection on the seat that was clicked on.
          * @param e
          */
         @Override
-        public void mouseClicked(MouseEvent e) {
-            Seat seat = findSeat(e.getPoint());
-
-            if ( ! selected.contains(seat))
-            {
-                selected.clear();
-                selected.add(seat);
-            }
-            else
-            {
-                selected.clear();
-            }
-            
-            repaint();
+        public void mouseClicked(MouseEvent e)
+        {
+        	//select(findSeat(e.getPoint()));
+        }
+        
+        public void mousePressed(MouseEvent e)
+        {
+        	deselect();
+        	toggle(findSeat(e.getPoint()));
+        }
+        
+        public void mouseDragged(MouseEvent e)
+        {
+        	int row = selected.isEmpty() ? -1 : selected.get(0).row();
+        	Seat seat = findSeat(e.getPoint());
+        	
+        	if (row == -1)
+        	{
+        		select(seat);
+        	}
+        	else if (seat.row() == row)
+        	{
+        		// Only select adjacent seats
+        		int col = seat.col();
+        		for (Seat s : selected)
+        		{
+        			if (Math.abs(col - s.col()) == 1)
+        			{
+        				select(seat);
+        				break;
+        			}
+        		}
+        	}
         }
     }
 }
