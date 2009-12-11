@@ -30,7 +30,7 @@ public class Controller extends JPanel implements ActionListener, ItemListener
 	private Controller() {}
 	
 	/**
-	 * @param view
+	 * @param view the main view object
 	 */
 	public Controller(View view)
 	{
@@ -87,11 +87,11 @@ public class Controller extends JPanel implements ActionListener, ItemListener
 	
 	/**
 	 * Sets the view this controller is to use.
-	 * @param v
+	 * @param view the view object
 	 */
-	public void view(View v)
+	public void view(View view)
 	{
-		view = v;
+		this.view = view;
 	}
 	
     /**
@@ -104,8 +104,8 @@ public class Controller extends JPanel implements ActionListener, ItemListener
     }
 	
 	/**
-	 * Called when a button is clicked.
-	 * @param e
+	 * Event handler for button clicks
+	 * @param e 
 	 */
 	public void actionPerformed(ActionEvent e)
 	{
@@ -118,12 +118,12 @@ public class Controller extends JPanel implements ActionListener, ItemListener
         else if (text.equals("Boka"))
         {
             // Books the seat(s) if they’re available
-            for (Seat seat : view.marked())
+            for (Seat seat : view.selected())
             {
                 if (seat.status().equals(Seat.Status.Available))
                 {
                 	seat.status(Seat.Status.Booked);
-                	view.unmark(seat);
+                	view.deselect(seat);
                 }
             }
             
@@ -132,13 +132,13 @@ public class Controller extends JPanel implements ActionListener, ItemListener
         else if (text.equals("Sälj"))
         {
             // Sells the seat(s) if they’ve been booked
-            for (Seat seat : view.marked())
+            for (Seat seat : view.selected())
             {
                 if (seat.status().equals(Seat.Status.Booked))
                 {
                     seat.status(Seat.Status.Sold);
                     printReceipt(seat);
-                    view.unmark();
+                    view.deselect();
                 }
             }
         }

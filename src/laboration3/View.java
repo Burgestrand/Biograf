@@ -26,7 +26,7 @@ public class View extends JPanel {
     /**
      * The list of marked seats
      */
-    private ArrayList<Seat> marked;
+    private ArrayList<Seat> selected;
 
     /**
      * Remember to call performance before you try to paint this panel!
@@ -40,18 +40,20 @@ public class View extends JPanel {
 
     /**
      * Sets the performance object to be used.
-     * @param p
+     * @param p the performance object
      */
     public void performance(Performance p)
     {
         performance = p;
         rows = p.seats().length;
         cols = p.seats()[0].length;
-        marked = new ArrayList<Seat>(cols);
+        selected = new ArrayList<Seat>(cols);
         repaint();
     }
 
     /**
+     * Paints the performance in a pretty way in the panel.
+     * 
      * Note: This version assumes a uniform length of rows and columns.
      * @param g
      */
@@ -92,7 +94,7 @@ public class View extends JPanel {
                           ,rect.height);
 
                 // Filling (superficial border)
-                int border = marked.contains(seats[row][col]) ? 2 : 1;
+                int border = selected.contains(seats[row][col]) ? 2 : 1;
                 g.setColor(status);
                 g.fillRect(rect.x + border
                           ,rect.y + border
@@ -133,7 +135,7 @@ public class View extends JPanel {
     }
 
     /**
-     * @param p
+     * @param p	Coordinates relative to this panel
      * @return  The seat at the given coordinates, or null if no seat was found
      */
     private Seat findSeat(Point p)
@@ -149,17 +151,17 @@ public class View extends JPanel {
     /**
      * @return  A list of the marked seats
      */
-    public ArrayList<Seat> marked()
+    public ArrayList<Seat> selected()
     {
-        return new ArrayList<Seat>(marked);
+        return new ArrayList<Seat>(selected);
     }
 
     /**
-     * Unmarks the marked seats
+     * Deselects all marked seats
      */
-    public void unmark()
+    public void deselect()
     {
-        marked.clear();
+        selected.clear();
         repaint();
     }
 
@@ -170,9 +172,9 @@ public class View extends JPanel {
      * 
      * @param seat
      */
-    public void unmark(Seat seat)
+    public void deselect(Seat seat)
     {
-        marked.remove(seat);
+        selected.remove(seat);
     }
 
     /**
@@ -188,14 +190,14 @@ public class View extends JPanel {
         public void mouseClicked(MouseEvent e) {
             Seat seat = findSeat(e.getPoint());
 
-            if ( ! marked.contains(seat))
+            if ( ! selected.contains(seat))
             {
-                marked.clear();
-                marked.add(seat);
+                selected.clear();
+                selected.add(seat);
             }
             else
             {
-                marked.clear();
+                selected.clear();
             }
             
             repaint();
