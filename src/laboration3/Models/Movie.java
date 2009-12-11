@@ -1,6 +1,7 @@
-package laboration3;
+package laboration3.Models;
 
 import java.util.ArrayList;
+
 
 /**
  * A model of a specific Movie

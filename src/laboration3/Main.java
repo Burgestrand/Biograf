@@ -1,75 +1,32 @@
-/**
- * Huvudprogrammet.
- */
 package laboration3;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
+
+import laboration3.Models.*;
 
 /**
  * The main application entry point. Sets up everything from movies to GUI.
  * @author Kim Burgestrand
  */
+@SuppressWarnings("serial")
 public class Main extends JFrame
 {
-    /**
-     * To make lint happy
-     */
-    private static final long serialVersionUID = 2213123762102639403L;
-
     public Main()
     {
-        setPreferredSize(new Dimension(500, 500));
+        setPreferredSize(new Dimension(650, 500));
         setTitle("Biograf :: Laboration 3");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-
-        Repertoir repertoir = Repertoir.Default();
-        PerformanceView pnlPerformance = new PerformanceView();
-
-        // Kommandoknappar
-        //----------------------------------------------------------------------
-        JPanel pnlButtons = new JPanel();
-        pnlButtons.setLayout(new GridLayout());
-
-        ButtonHandler btnHandler = new ButtonHandler(pnlPerformance);
-
-        pnlButtons.add(new MyButton("Avsluta", btnHandler));
-        pnlButtons.add(new MyButton("Boka", btnHandler));
-        pnlButtons.add(new MyButton("Sälj", btnHandler));
-        pnlButtons.add(new MyButton("Hämta", btnHandler));
-
-        // Film panel
-        //----------------------------------------------------------------------
-        JPanel pnlFilm = new JPanel();
-
-        JComboBox cmbMovie = new JComboBox(repertoir.movies().toArray());
-        Movie current = (Movie)cmbMovie.getSelectedItem();
-        JComboBox cmbPerformances = new JComboBox(current.performance().toArray());
-        pnlPerformance.performance((Performance) cmbPerformances.getSelectedItem());
-
-        // Event handlers
-        cmbMovie.addItemListener(new MovieChangeHandler(cmbPerformances));
-        cmbPerformances.addItemListener(new PerformanceChangeHandler(pnlPerformance));
-
-        pnlFilm.setLayout(new GridLayout(1, 2));
-        pnlFilm.add(cmbMovie);
-        pnlFilm.add(cmbPerformances);
-
-        JPanel pnlControls = new JPanel();
-        pnlControls.setLayout(new GridLayout(1, 2));
-        pnlControls.add(pnlButtons);
-        pnlControls.add(pnlFilm);
-        pnlControls.setBorder(new EmptyBorder(5, 2, 5, 2));
+        
+        View view = new View();
+        Controller controller = new Controller(view);
 
         // add components to main frame
         //---------------------------------------------------------
-        add("Center", pnlPerformance);
-        add("South", pnlControls);
+        add("Center", view);
+        add("South", controller);
         pack();
         setVisible(true);
     }
@@ -81,100 +38,12 @@ public class Main extends JFrame
     {
         new Main();
     }
-
-    // Knappar
-    //--------------------------------------------------------------------------
-    /**
-     * This kind of button implements its’ own action handler.
-     */
-    private class MyButton extends JButton
-    {
-        /**
-         * To make lint happy.
-         */
-        private static final long serialVersionUID = 289217876210212303L;
-
-        /**
-         * Creates a JButton with the given action listener.
-         * @param text
-         * @param handler
-         */
-        public MyButton(String text, ActionListener handler)
-        {
-            setText(text);
-            addActionListener(handler);
-        }
-    }
-
-    /**
-     * Handles button clicking.
-     */
-    private class ButtonHandler implements ActionListener
-    {
-        private PerformanceView performance;
-
-        /**
-         * Creates a button handler for the command buttons.
-         * @param pnl
-         */
-        public ButtonHandler(PerformanceView pnl)
-        {
-            performance = pnl;
-        }
-
-        /**
-         * Handles command button events.
-         * @param e
-         */
-        public void actionPerformed(ActionEvent e)
-        {
-            String text = ((MyButton)e.getSource()).getText();
-
-            if (text.equals("Avsluta"))
-            {
-                System.exit(0);
-            }
-            else if (text.equals("Boka"))
-            {
-                // Books the seat(s) if they’re available
-                for (Seat seat : performance.marked())
-                {
-                    if (seat.status().equals(Seat.Status.Available))
-                    {
-                        performance.status(Seat.Status.Booked);
-                        performance.unmark(seat);
-                    }
-                }
-            }
-            else if (text.equals("Sälj"))
-            {
-                // Sells the seat(s) if they’ve been booked
-                for (Seat seat : performance.marked())
-                {
-                    if (seat.status().equals(Seat.Status.Booked))
-                    {
-                        seat.status(Seat.Status.Sold);
-                        printReceipt(seat);
-                        performance.unmark();
-                    }
-                }
-            }
-        }
-
-        /**
-         * Prints a receipt to STDOUT.
-         * @param seat
-         */
-        private void printReceipt(Seat seat)
-        {
-            System.out.println("Plats #" + (seat.col() + 1) + " på rad " + (seat.row() + 1) + " såld.");
-        }
     }
 
     /**
      * Listens for movie change.
      */
-    private class MovieChangeHandler implements ItemListener
+    class MovieChangeHandler implements ItemListener
     {
         private JComboBox performances;
 
@@ -203,21 +72,20 @@ public class Main extends JFrame
                 }
             }
         }
-
     }
 
     /**
      * Listens for performance change.
      */
-    private class PerformanceChangeHandler implements ItemListener
+    class PerformanceChangeHandler implements ItemListener
     {
-        private PerformanceView view;
+        private View view;
 
         /**
          * @param performances  The combo box that contains the available performances
          * @param viewpanel     The performance view panel
          */
-        public PerformanceChangeHandler(PerformanceView view)
+        public PerformanceChangeHandler(View view)
         {
             this.view = view;
         }
@@ -235,4 +103,3 @@ public class Main extends JFrame
             }
         }
     }
-}

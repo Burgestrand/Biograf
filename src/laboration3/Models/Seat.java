@@ -1,4 +1,4 @@
-package laboration3;
+package laboration3.Models;
 
 /**
  * A model of an individual seat.

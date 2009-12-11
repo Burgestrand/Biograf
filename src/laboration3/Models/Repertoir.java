@@ -1,6 +1,7 @@
-package laboration3;
+package laboration3.Models;
 
 import java.util.ArrayList;
+
 
 /**
  * Contains a repertoir of all available movies.

@@ -7,17 +7,16 @@ import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.event.*;
 
+import laboration3.Models.Performance;
+import laboration3.Models.Seat;
+
 /**
  * Draws the performance in a JPanel.
  *
  * @author Kim Burgestrand
  */
-public class PerformanceView extends JPanel {
-    /**
-     * To make eclipse happy
-     */
-    private static final long serialVersionUID = 2892178762102639403L;
-
+@SuppressWarnings("serial")
+public class View extends JPanel {
     /**
      * The actual performance this is a view for.
      */
@@ -32,7 +31,7 @@ public class PerformanceView extends JPanel {
     /**
      * Remember to call performance before you try to paint this panel!
      */
-    public PerformanceView()
+    public View()
     {
         MouseHandler handler = new MouseHandler();
         addMouseListener(handler);
@@ -156,19 +155,6 @@ public class PerformanceView extends JPanel {
     }
 
     /**
-     * Sets the status of all marked seats to “status”.
-     * @param status
-     */
-    public void status(Seat.Status status)
-    {
-        for (Seat seat : marked)
-        {
-            seat.status(status);
-        }
-        repaint();
-    }
-
-    /**
      * Unmarks the marked seats
      */
     public void unmark()
@@ -178,7 +164,10 @@ public class PerformanceView extends JPanel {
     }
 
     /**
-     * Unmarks the given seat
+     * Unmarks the given seat.
+     * 
+     * Note: does *not* call repaint
+     * 
      * @param seat
      */
     public void unmark(Seat seat)
