@@ -20,7 +20,7 @@ public class View extends JPanel {
     /**
      * The actual performance this is a view for.
      */
-    private Performance performance;
+    private Performance performance = null;
     private int rows, cols;
 
     /**
@@ -45,8 +45,8 @@ public class View extends JPanel {
     public void performance(Performance p)
     {
         performance = p;
-        rows = p.seats().length;
-        cols = p.seats()[0].length;
+        rows = p.salon().seats().length;
+        cols = p.salon().seats()[0].length;
         selected = new ArrayList<Seat>(cols);
         repaint();
     }
@@ -71,9 +71,12 @@ public class View extends JPanel {
     {
         // Clear drawing area (needed when performance object changes)
         g.clearRect(0, 0, getBounds().width, getBounds().height);
+        
+        // ABORT! ABORT!
+        if (performance == null) return;
 
         Dimension seat   = seat();
-    	Seat[][] seats   = performance.seats();
+    	Seat[][] seats   = performance.salon().seats();
         int padding      = 2;
     	
         for (int row = 0; row < rows; ++row)
@@ -154,7 +157,7 @@ public class View extends JPanel {
         int col = base.x / seat().width;
         int row = base.y / seat().height;
 
-        return col < cols && row < rows ? performance.seats()[row][col] : null;
+        return col < cols && row < rows ? performance.salon().seats()[row][col] : null;
     }
 
     /**
@@ -222,22 +225,18 @@ public class View extends JPanel {
      * Handles mouse clicks on the whole panel.
      */
     private class MouseHandler extends MouseInputAdapter implements MouseInputListener {
-        /**
-         * Toggles selection on the seat that was clicked on.
-         * @param e
-         */
-        @Override
-        public void mouseClicked(MouseEvent e)
-        {
-        	//select(findSeat(e.getPoint()));
-        }
-        
+    	/**
+    	 * Action handler for mouse press (seat selection)
+    	 */
         public void mousePressed(MouseEvent e)
         {
         	deselect();
-        	toggle(findSeat(e.getPoint()));
+        	select(findSeat(e.getPoint()));
         }
         
+        /**
+         * Action handler
+         */
         public void mouseDragged(MouseEvent e)
         {
         	int row = selected.isEmpty() ? -1 : selected.get(0).row();

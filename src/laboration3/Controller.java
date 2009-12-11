@@ -2,6 +2,7 @@ package laboration3;
 
 import java.awt.*;
 import java.awt.event.*;
+
 import javax.swing.*;
 import javax.swing.border.*;
 import java.util.ArrayList;
@@ -19,7 +20,7 @@ import laboration3.Models.*;
  * @since  v2.0.1
  */
 @SuppressWarnings("serial")
-public class Controller extends JPanel implements ActionListener, ItemListener
+public class Controller extends JPanel implements ActionListener
 {
 	private View view;
 	private JComboBox movies;
@@ -71,17 +72,22 @@ public class Controller extends JPanel implements ActionListener, ItemListener
 		JPanel pnl = new JPanel();
 		ArrayList<Movie> movielist = Repertoir.Default().movies();
 		Movie movie = movielist.get(0); // Currently selected movie is always first item
-		Performance perf = movie.performance().get(0);
 		
+		// Movies combo box
 		movies = new JComboBox(movielist.toArray());
-        movies.addItemListener(this);
-        performances = new JComboBox(movie.performance().toArray());;
-        performances.addItemListener(this);  
+		movies.setEditable(true);
+        movies.addItemListener(new MovieChanger());
+        
+        // Performance combo box
+        performances = new JComboBox(movie.performance().toArray());
+        performances.setEditable(true);
+        performances.addItemListener(new PerformanceChanger());
+        
+        view.performance((Performance)performances.getSelectedItem());
+        
+		// --
         pnl.add(movies);
         pnl.add(performances);
-        
-        view.performance(perf);
-        
         add(pnl);
 	}
 	
@@ -144,32 +150,68 @@ public class Controller extends JPanel implements ActionListener, ItemListener
             }
         }
 	}
-
+	
 	/**
-	 * Event handler for change of movie / performance.
-	 * @param e
+	 * Event handler for change of movie.
 	 */
-	@Override
-	public void itemStateChanged(ItemEvent e) {
-		if (e.getStateChange() != ItemEvent.SELECTED) return;
-		
-		// Movie or Performance
-		Object type = e.getItem();
-		
-		if (type instanceof Movie)
+	class MovieChanger implements ItemListener
+	{
+		/**
+		 * Allows selecting a new movie
+		 * @param e
+		 */
+		public void itemStateChanged(ItemEvent e)
 		{
-			Movie movie = (Movie) e.getItem();
-			performances.removeAllItems();
+			if (e.getStateChange() != ItemEvent.SELECTED) return;
+			Object type = e.getItem();
+			Movie movie = null;
 			
-			for (Performance p : movie.performance())
+			if (type instanceof Movie)
 			{
-				performances.addItem(p);
+				movie = (Movie)type;
+				performances.removeAllItems();
+				for (Performance p : movie.performance())
+				{
+					performances.addItem(p);
+				}
+			}
+			else if (type instanceof String)
+			{
+				movie = new Movie(type.toString(), new ArrayList<Performance>());
+				movies.addItem(movie);
+				movies.setSelectedItem(movie);
 			}
 		}
-		else if (type instanceof Performance)
+	}
+	
+	/**
+	 * Event handler for change of performance.
+	 */
+	class PerformanceChanger implements ItemListener
+	{
+		/**
+		 * Allows selecting a new performance, or CREATING (!!) a performance
+		 * @param e
+		 */
+		public void itemStateChanged(ItemEvent e)
 		{
-			Performance perf = (Performance) e.getItem();
-			view.performance(perf);
+			if (e.getStateChange() != ItemEvent.SELECTED) return;
+			Object type = e.getItem();
+			
+			if (type instanceof Performance)
+			{
+				view.performance((Performance)e.getItem());
+			}
+			else if (type instanceof String)
+			{
+				String time = type.toString();
+				// Default size: 10x10
+				Movie movie = (Movie) movies.getSelectedItem();
+				Performance p = new Performance(new Salon(8, 8), time);
+				movie.add(p);
+				performances.addItem(p);
+				performances.setSelectedItem(p);
+			}
 		}
 	}
 }

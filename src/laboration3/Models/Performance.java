@@ -6,71 +6,52 @@ package laboration3.Models;
  *
  * @author Kim Burgestrand
  */
-public class Performance
+public class Performance implements Comparable<Performance>
 {
     // All seats
-    private Seat[][] seats;
+	private Salon salon;
     private String time;
     public Movie movie;
 
     /**
-     * Creates a new Performance object with the rows*cols amount of seats
-     * available for booking at the given time.
-     *
-     * @param rows  Must be > 0
-     * @param cols  Must be > 0
-     * @param time  The time this performance is performed
+     * @param salon	the salon this performance is performed in
+     * @param time  the time this performance is performed
      */
-    public Performance(int rows, int cols, String time)
+    public Performance(Salon salon, String time)
     {
-        if (rows <= 0 || cols <= 0)
-        {
-            throw new RuntimeException("Neither rows nor columns can be less than, or equal to, zero.");
-        }
-
-        seats = new Seat[rows][cols];
-        for (int row = 0; row < rows; ++row)
-        {
-            for (int col = 0; col < cols; ++col)
-            {
-                seats[row][col] = new Seat(row, col);
-            }
-        }
-
+    	this.salon = salon;
         this.time = time;
     }
 
     /**
-     * @return  The array of seats this performance has (no matter the status)
+     * @return the salon selected for this performance
      */
-    public Seat[][] seats()
+    public Salon salon()
     {
-        return seats;
+        return salon;
     }
-
+    
     /**
-     * @param row   Must be >= 1
-     * @return      The list of seats at the given row
+     * The time this performance is performed.
+     * @return time
      */
-    public Seat[] seats(int row)
+    public String time()
     {
-        return seats[row - 1];
+    	return time;
     }
-
-    /**
-     * @param row >= 1
-     * @param col >= 1
-     * @return  The seat at the given row and column.
-     * @throws IndexOutOfBoundsException
-     */
-    public Seat seats(int row, int col)
-    {
-        return seats[row - 1][col - 1];
-    }
-
+    
     @Override
     public String toString()
     {
-        return movie + " (" + time + ")";
+        return time;
     }
+
+    /**
+     * Compares a performance object to another
+     * @param p
+     * @return
+     */
+	public int compareTo(Performance p) {
+		return time.compareTo(p.time());
+	}
 }

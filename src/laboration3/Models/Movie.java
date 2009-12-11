@@ -1,13 +1,12 @@
 package laboration3.Models;
 
 import java.util.ArrayList;
-
-
+import java.util.Collections;
 /**
  * A model of a specific Movie
  * @author Kim Burgestrand
  */
-public class Movie
+public class Movie implements Comparable<Movie>
 {
     private String name;
     private ArrayList<Performance> performance;
@@ -36,6 +35,15 @@ public class Movie
     {
         return name;
     }
+    
+    /**
+     * Adds a new performance to the list of performances.
+     */
+    public void add(Performance p)
+    {
+    	performance.add(p);
+    	Collections.sort(performance);
+    }
 
     /**
      * @return  The list of performances this movie has
@@ -52,4 +60,9 @@ public class Movie
     {
         return name;
     }
+
+	@Override
+	public int compareTo(Movie o) {
+		return name.compareTo(o.name());
+	}
 }

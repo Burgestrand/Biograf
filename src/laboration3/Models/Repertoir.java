@@ -30,17 +30,17 @@ public class Repertoir {
     public static Repertoir Default()
     {
         ArrayList<Movie> movies = new ArrayList<Movie>();
-        ArrayList<Performance> performances;
+        ArrayList<Performance> perfs;
 
-        performances = new ArrayList<Performance>();
-        performances.add(new Performance(12, 10, "21:30"));
-        performances.add(new Performance(10, 10, "22:30"));
-            movies.add(new Movie("Happy Gilmore", performances));
+        perfs = new ArrayList<Performance>();
+        perfs.add(new Performance(new Salon(5, 5), "16:00"));
+        perfs.add(new Performance(new Salon(12, 10), "21:30"));
+        movies.add(new Movie("Happy Gilmore", perfs));
 
-        performances = new ArrayList<Performance>();
-        performances.add(new Performance(12, 10, "07:00"));
-        performances.add(new Performance(10, 10, "18:00"));
-            movies.add(new Movie("Bollibompa", performances));
+        perfs = new ArrayList<Performance>();
+        perfs.add(new Performance(new Salon(8, 5), "07:00"));
+        perfs.add(new Performance(new Salon(12, 10), "18:00"));
+            movies.add(new Movie("Bollibompa", perfs));
 
         return new Repertoir(movies);
     }
