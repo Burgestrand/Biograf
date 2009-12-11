@@ -87,7 +87,7 @@ public class Controller extends JPanel implements ActionListener, ItemListener
 	
 	/**
 	 * Sets the view this controller is to use.
-	 * @param view
+	 * @param v
 	 */
 	public void view(View v)
 	{
